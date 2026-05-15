@@ -494,7 +494,8 @@ func (m *Manager) SaveConfig() error {
 				Framerate:   conf.Framerate,
 				Resolution:  conf.Resolution,
 				Pattern:     conf.Pattern,
-
+			}
+			if err := server.SupabaseClient.SaveChannelConfig(supabaseChannel); err != nil {
 				log.Printf("[CHANNELS] Warning: Failed to save channel %s to Supabase: %v", conf.Username, err)
 			}
 		}
