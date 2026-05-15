@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  # Byparr - Scalable Cloudflare bypass service
+  # FREE TIER c7i-flex.large (4GB RAM): 2 instances optimized for Cloudflare 2026
+  byparr:
+    image: ghcr.io/thephaseless/byparr:latest
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8191
+      - PROXY_SERVER=${PROXY_SERVER:-}
+      - PROXY_USERNAME=${PROXY_USERNAME:-}
+      - PROXY_PASSWORD=${PROXY_PASSWORD:-}
+      - TIMEOUT=180  # 3 minutes timeout for Cloudflare challenges
+      - LOG_LEVEL=INFO
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8191/"]
+      interval: 20s
+      timeout: 8s
+      retries: 3
+      start_period: 60s
+    networks:
+      - recorder-network
+    deploy:
+      replicas: 2  # FREE TIER: 2 instances with more resources each
+      resources:
+        limits:
+          memory: 1.5G  # Increased from 1G - Cloudflare 2026 needs more memory
+        reservations:
+          cpus: '0.5'
+          memory: 500M
+
+  # Nginx load balancer for Byparr instances
+  byparr-lb:
+    image: nginx:alpine
+    container_name: byparr-lb
+    ports:
+      - "8191:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - byparr
+    restart: unless-stopped
+    networks:
+      - recorder-network
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /var/run/nginx.pid || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # GoOnDVR - Stream recorder (FREE TIER c7i-flex.large OPTIMIZED)
+  # NOTE: For best results, use manual cookies from browser instead of Byparr
+  # See docs/CLOUDFLARE_BYPASS_2026.md for 100% success rate method
+  recorder:
+    build: .
+    container_name: goondvr
+    command: ["--debug"]
+    environment:
+      - FLARESOLVERR_URL=http://byparr-lb/v1
+      - PROXY_URL=${PROXY_URL:-}
+      - PROXY_USERNAME=${PROXY_USERNAME:-}
+      - PROXY_PASSWORD=${PROXY_PASSWORD:-}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./videos:/usr/src/app/videos
+      - ./database:/usr/src/app/database
+      - ./conf:/usr/src/app/conf
+    depends_on:
+      byparr-lb:
+        condition: service_healthy
+    restart: unless-stopped
+    stop_grace_period: 5m  # Allow 5 minutes for graceful shutdown (finalize recordings)
+    networks:
+      - recorder-network
+    deploy:
+      resources:
+        limits:
+          memory: 600M  # Increased slightly for better stability
+        reservations:
+          cpus: '0.2'
+          memory: 200M
+
+networks:
+  recorder-network:
+    driver: bridge

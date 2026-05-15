@@ -1,0 +1,87 @@
+# Binaries
+goondvr
+goondvr.exe
+bin/
+*.exe
+
+# Videos and recordings
+videos/
+*.mp4
+*.mkv
+*.flv
+*.ts
+
+# Configuration (contains sensitive data)
+conf/
+settings.json
+
+# Database files
+database/
+
+# AWS secrets and keys
+aws-secrets/
+*.pem
+*.key
+storage-key.txt
+
+# Logs
+*.log
+run_logs.txt
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Node modules (if any)
+node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+env/
+
+# Go
+*.test
+*.out
+vendor/
+
+# AWS Secrets - NEVER commit these!
+aws-secrets/*.pem
+*.pem
+*.key
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+run_logs.txt
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
+deploy.tar.gz
