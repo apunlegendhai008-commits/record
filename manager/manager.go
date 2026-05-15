@@ -494,8 +494,11 @@ func (m *Manager) SaveConfig() error {
 				Framerate:   conf.Framerate,
 				Resolution:  conf.Resolution,
 				Pattern:     conf.Pattern,
+				MaxFilesize: conf.MaxFilesize,
+				CreatedAt:   conf.CreatedAt,
+				StreamedAt:  conf.StreamedAt,
 			}
-			if err := server.SupabaseClient.SaveChannelConfig(supabaseChannel); err != nil {
+			if err := server.SupabaseClient.UpsertChannel(supabaseChannel); err != nil {
 				log.Printf("[CHANNELS] Warning: Failed to save channel %s to Supabase: %v", conf.Username, err)
 			}
 		}
