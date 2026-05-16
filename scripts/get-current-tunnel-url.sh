@@ -26,10 +26,12 @@ if [ -f "$TUNNEL_URL_FILE" ]; then
         # Verify it's accessible
         if curl -sf --max-time 5 "$URL" > /dev/null 2>&1; then
             echo -e "${GREEN}✓ Tunnel is accessible${NC}"
+            exit 0
         else
             echo -e "${YELLOW}⚠ Tunnel URL exists but may not be accessible${NC}"
+            echo "Continuing to check Supabase and tunnel logs for an updated URL..."
+            echo ""
         fi
-        exit 0
     fi
 fi
 
