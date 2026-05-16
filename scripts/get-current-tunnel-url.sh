@@ -29,8 +29,9 @@ if [ -f "$TUNNEL_URL_FILE" ]; then
             exit 0
         else
             echo -e "${YELLOW}⚠ Tunnel URL exists but may not be accessible${NC}"
-            echo "Continuing to check Supabase and tunnel logs for an updated URL..."
+            echo "Removing stale local tunnel cache and checking Supabase/tunnel logs..."
             echo ""
+            rm -f "$TUNNEL_URL_FILE"
         fi
     fi
 fi
