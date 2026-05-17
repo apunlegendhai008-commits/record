@@ -344,6 +344,7 @@ type ChannelConfig struct {
 	Resolution int    `json:"resolution"`
 	Pattern    string `json:"pattern"`
 	MaxFilesize int   `json:"max_filesize"`
+	MaxDuration int   `json:"max_duration"`
 	CreatedAt  int64  `json:"created_at"`
 	StreamedAt int64  `json:"streamed_at,omitempty"`
 	UpdatedAt  string `json:"updated_at,omitempty"`

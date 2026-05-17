@@ -24,7 +24,7 @@ type GoFileUploader struct {
 func NewGoFileUploader() *GoFileUploader {
 	return &GoFileUploader{
 		client: &http.Client{
-			Timeout: 30 * time.Minute, // Long timeout for large video uploads
+			Timeout: 2 * time.Hour, // Very long timeout for large video uploads (up to 2GB files)
 			Transport: &http.Transport{
 				MaxIdleConns:        100,
 				MaxIdleConnsPerHost: 100,

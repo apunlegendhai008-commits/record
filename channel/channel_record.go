@@ -439,6 +439,19 @@ func (ch *Channel) handleSegmentForMonitor(runID uint64, b []byte, duration floa
 	ch.Duration += duration
 	ch.segmentCount++
 	
+	// Check if max duration has been reached
+	if ch.Config.MaxDuration > 0 && ch.Duration >= float64(ch.Config.MaxDuration) {
+		formattedDuration := internal.FormatDuration(ch.Duration)
+		maxDurationStr := internal.FormatDuration(float64(ch.Config.MaxDuration))
+		ch.Info("⏱️ Max recording duration reached (%s / %s) - closing file and stopping stream", formattedDuration, maxDurationStr)
+		ch.fileMu.Unlock()
+		// Close the file to trigger finalization
+		if err := ch.Cleanup(); err != nil {
+			ch.Error("cleanup after max duration: %s", err.Error())
+		}
+		return retry.Unrecoverable(fmt.Errorf("max recording duration reached (%s)", formattedDuration))
+	}
+	
 	// Periodic sync every 10 segments (~10 seconds) to minimize data loss
 	// on forced shutdown (e.g., GitHub Actions workflow cancellation)
 	if ch.segmentCount%10 == 0 {

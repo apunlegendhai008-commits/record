@@ -23,6 +23,7 @@ type ChannelConfig struct {
 	Resolution  int    `json:"resolution"`
 	Pattern     string `json:"pattern"`
 	MaxFilesize int    `json:"max_filesize"`
+	MaxDuration int    `json:"max_duration"` // Max recording duration in seconds (0 = unlimited, default 7200 = 2h)
 	CreatedAt   int64  `json:"created_at"`
 
 	// Persisted metadata — populated at runtime and saved so restarts don't lose them.
@@ -77,6 +78,7 @@ type ChannelInfo struct {
 	Filename         string
 	StreamedAt       string
 	MaxFilesize      string
+	MaxDuration      string // Max recording duration per stream (e.g., "2h")
 	CreatedAt        int64
 	Logs             []string
 	GlobalConfig     *Config // for nested template to access $.Config

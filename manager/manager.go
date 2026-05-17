@@ -495,6 +495,7 @@ func (m *Manager) SaveConfig() error {
 				Resolution:  conf.Resolution,
 				Pattern:     conf.Pattern,
 				MaxFilesize: conf.MaxFilesize,
+				MaxDuration: conf.MaxDuration,
 				CreatedAt:   conf.CreatedAt,
 				StreamedAt:  conf.StreamedAt,
 			}
@@ -575,6 +576,7 @@ func (m *Manager) LoadConfig() error {
 					Resolution:  sc.Resolution,
 					Pattern:     sc.Pattern,
 					MaxFilesize: sc.MaxFilesize,
+					MaxDuration: sc.MaxDuration,
 					CreatedAt:   sc.CreatedAt,
 					StreamedAt:  sc.StreamedAt,
 				})
@@ -615,6 +617,10 @@ func (m *Manager) LoadConfig() error {
 	seen := make(map[string]struct{}, len(config))
 	for i, conf := range config {
 		conf.Sanitize()
+		// Set default max duration if not specified (7200 seconds = 2 hours)
+		if conf.MaxDuration <= 0 {
+			conf.MaxDuration = 7200
+		}
 		if conf.Username == "" {
 			return fmt.Errorf("channel at index %d has empty username", i)
 		}
@@ -654,6 +660,10 @@ func (m *Manager) LoadConfig() error {
 // CreateChannel starts monitoring an M3U8 stream
 func (m *Manager) CreateChannel(conf *entity.ChannelConfig, shouldSave bool) error {
 	conf.Sanitize()
+	// Set default max duration if not specified (7200 seconds = 2 hours)
+	if conf.MaxDuration <= 0 {
+		conf.MaxDuration = 7200
+	}
 
 	if conf.Username == "" {
 		return fmt.Errorf("username is empty")

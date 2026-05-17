@@ -70,6 +70,11 @@ func main() {
 				Usage: "Split video into segments every N MB ('0' to disable)",
 				Value: 0,
 			},
+			&cli.IntFlag{
+				Name:  "max-duration",
+				Usage: "Maximum recording duration per stream in seconds (0 = unlimited, default 7200 = 2h)",
+				Value: 7200,
+			},
 			&cli.StringFlag{
 				Name:    "port",
 				Aliases: []string{"p"},
@@ -241,6 +246,7 @@ func start(c *cli.Context) error {
 		Resolution:  c.Int("resolution"),
 		Pattern:     c.String("pattern"),
 		MaxFilesize: c.Int("max-filesize"),
+		MaxDuration: c.Int("max-duration"),
 	}, false); err != nil {
 		return fmt.Errorf("create channel: %w", err)
 	}

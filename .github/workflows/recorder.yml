@@ -20,7 +20,7 @@ permissions:
 jobs:
   record:
     runs-on: ubuntu-latest
-    timeout-minutes: 360  # 6h — 1h buffer over 5h recording
+    timeout-minutes: 720  # 12h — 7h buffer over 5h recording (accounts for transcoding + large uploads)
 
     steps:
       - name: Checkout code

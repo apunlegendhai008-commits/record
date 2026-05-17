@@ -27,7 +27,7 @@ func NewVoeSXUploader(apiKey string) *VoeSXUploader {
 	return &VoeSXUploader{
 		apiKey: apiKey,
 		client: &http.Client{
-			Timeout: 30 * time.Minute,
+			Timeout: 2 * time.Hour, // Extended timeout for large video uploads
 			Transport: &http.Transport{
 				MaxIdleConns:        100,
 				MaxIdleConnsPerHost: 100,

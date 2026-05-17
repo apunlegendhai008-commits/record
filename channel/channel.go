@@ -173,6 +173,7 @@ func (ch *Channel) ExportInfo() *entity.ChannelInfo {
 		IsPaused:         ch.Config.IsPaused,
 		Username:         ch.Config.Username,
 		MaxFilesize:      internal.FormatFilesize(int64(ch.Config.MaxFilesize) * 1024 * 1024), // MaxFilesize from config is in MB
+		MaxDuration:      internal.FormatDuration(float64(ch.Config.MaxDuration)),
 		StreamedAt:       streamedAt,
 		CreatedAt:        ch.Config.CreatedAt,
 		Duration:         internal.FormatDuration(duration),

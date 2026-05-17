@@ -28,7 +28,7 @@ func NewTurboViPlayUploader(apiKey string) *TurboViPlayUploader {
 	return &TurboViPlayUploader{
 		apiKey: apiKey,
 		client: &http.Client{
-			Timeout: 30 * time.Minute,
+			Timeout: 2 * time.Hour, // Extended timeout for large video uploads
 			Transport: &http.Transport{
 				MaxIdleConns:        100,
 				MaxIdleConnsPerHost: 100,
