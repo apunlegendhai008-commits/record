@@ -449,7 +449,9 @@ func (ch *Channel) handleSegmentForMonitor(runID uint64, b []byte, duration floa
 		if err := ch.Cleanup(); err != nil {
 			ch.Error("cleanup after max duration: %s", err.Error())
 		}
-		return retry.Unrecoverable(fmt.Errorf("max recording duration reached (%s)", formattedDuration))
+		// Return ErrStreamEnded instead of Unrecoverable so the monitor loop continues
+		// and can restart recording if the stream is still live
+		return internal.ErrStreamEnded
 	}
 	
 	// Periodic sync every 10 segments (~10 seconds) to minimize data loss
