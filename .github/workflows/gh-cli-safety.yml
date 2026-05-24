@@ -1,0 +1,25 @@
+name: GH CLI Safety Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  gh-cli-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run GH CLI safety check
+        run: |
+          chmod +x scripts/check-gh-cli-auth.sh
+          scripts/check-gh-cli-auth.sh
