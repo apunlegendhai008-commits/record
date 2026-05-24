@@ -19,6 +19,17 @@ try {
 }
 Write-Host ""
 
+# Check if gh is authenticated (for local usage)
+try {
+    gh auth status > $null 2>&1
+    Write-Host "✅ GitHub CLI authenticated" -ForegroundColor Green
+} catch {
+    Write-Host "❌ Not authenticated with GitHub" -ForegroundColor Yellow
+    Write-Host "Run: gh auth login" -ForegroundColor Yellow
+    exit 1
+}
+Write-Host ""
+
 # Get latest workflow run
 Write-Host "📥 Fetching latest workflow run..." -ForegroundColor Yellow
 try {

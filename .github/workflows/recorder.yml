@@ -620,14 +620,16 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "🔍 Checking for pending workflow runs..."
-          
+          echo "$GH_TOKEN" | gh auth login --with-token > /dev/null
+          gh auth status
+
           CURRENT_RUN_ID=${{ github.run_id }}
-          
+
           PENDING_RUNS=$(gh run list --workflow="24/7 Recorder" --status queued --status in_progress \
             --json databaseId --jq "[.[] | select(.databaseId != $CURRENT_RUN_ID) | .databaseId] | length")
-          
+
           echo "Found $PENDING_RUNS pending runs (excluding current: $CURRENT_RUN_ID)"
-          
+
           if [ "$PENDING_RUNS" -gt 0 ]; then
             echo "✅ Next run already queued/running, skipping trigger"
           else
