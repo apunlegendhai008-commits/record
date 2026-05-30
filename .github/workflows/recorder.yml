@@ -10,6 +10,8 @@ on:
     branches: [ main, master ]
 
 concurrency:
+  # Prevents multiple instances from fighting over resources
+  # If you want strict serial execution, remove run_id
   group: recorder-${{ github.run_id }}
   cancel-in-progress: false
 
@@ -151,7 +153,7 @@ jobs:
             pkill -f cloudflared 2>/dev/null || true
             sleep 2
 
-            rm -f tunnel.log
+            rm -f tunnel.log tunnel.pid
             cloudflared tunnel --url http://localhost:8080 --no-autoupdate > tunnel.log 2>&1 &
             TUNNEL_PID=$!
             echo $TUNNEL_PID > tunnel.pid
@@ -570,6 +572,10 @@ jobs:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           echo "🔍 Checking for pending workflow runs..."
+          # Ensure GitHub CLI is available (usually is, but check just in case)
+          if ! command -v gh &> /dev/null; then
+            sudo apt-get update && sudo apt-get install -y gh
+          fi
 
           CURRENT_RUN_ID=${{ github.run_id }}
 
